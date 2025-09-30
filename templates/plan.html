@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - Your Plan</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Applying the Inter font to the whole page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Adding some basic styling for the plan output */
+        .plan-content h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        .plan-content h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .plan-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .plan-content ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <!-- Banner Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-12 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">{{ title }}</h1>
+            <p class="text-xl text-blue-100">Your AI-Powered Travel Planner</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8 -mt-24 relative z-10">
+            <!-- Header Section -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Your Personalized Itinerary</h2>
+                <p class="text-gray-600 mt-2">Here is the travel plan generated just for you.</p>
+            </div>
+
+            <!-- Tourism Plan Display -->
+            <div class="prose max-w-none plan-content">
+                {{ tourism_plan | safe }}
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-12">
+                <a href="/" class="w-full md:w-auto px-8 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium transition duration-200">
+                    Create Another Plan
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

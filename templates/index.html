@@ -2,10 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Applying the Inter font to the whole page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
-    <h1>Welcome to {{ title }}!</h1>
-    <p>AI Agents for Tourism.</p>
+<body class="bg-gray-100 text-gray-800">
+    <!-- Banner Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-12 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">{{ title }}</h1>
+            <p class="text-xl text-blue-100">Your AI-Powered Travel Planner</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-8 -mt-24 relative z-10">
+            <!-- Header Section -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Create Your Perfect Itinerary</h2>
+                <p class="text-gray-600 mt-2">Fill out the details below to get started.</p>
+            </div>
+
+            <!-- Tourism Plan Form -->
+            <form id="tourism-form" action='/suggest_tourism_plan' method='POST'>
+                <!-- Prompt Text Area -->
+                <div class="mb-6">
+                    <label for="prompt" class="block mb-2 text-md font-medium text-gray-700">Enter the <b>City, Country</b> you want to visit and what sort of things you enjoy when you do tourism – e.g. Sightseeing (including museums), Shopping, Theatre, Dining, or Walk; or just say I would like a mix of all activities.</label>
+                    <textarea id="prompt" name="prompt" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                              placeholder="e.g., Paris, France. I enjoy a mix of sightseeing, museums, and dining."
+                    >Paris, France. I would like a balanced mix of all tourism activities.</textarea>
+                </div>
+
+                <!-- Days and Pace Section -->
+                <div class="flex flex-col md:flex-row md:items-start md:space-x-20 mb-8">
+                    <!-- Number of Days Input -->
+                    <div class="mb-6 md:mb-0">
+                        <label for="days" class="block mb-2 text-md font-medium text-gray-700">Number of days</label>
+                        <input type="number" id="days" name="days" min="1" value="3" class="w-full md:w-32 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    </div>
+
+                    <!-- Itinerary Pace Radio Buttons -->
+                    <div>
+                        <label class="block mb-3 text-md font-medium text-gray-700">Itinerary Pace</label>
+                        <div class="flex items-center space-x-6 pt-2">
+                            <div class="flex items-center">
+                                <input id="pace-compressed" name="pace" type="radio" value="Compressed" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <label for="pace-compressed" class="ml-2 text-sm font-medium text-gray-900">Compressed</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="pace-normal" name="pace" type="radio" value="Normal" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500" checked>
+                                <label for="pace-normal" class="ml-2 text-sm font-medium text-gray-900">Normal</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="pace-relaxed" name="pace" type="radio" value="Relaxed" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
+                                <label for="pace-relaxed" class="ml-2 text-sm font-medium text-gray-900">Relaxed</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Submit Button and Loading Indicator -->
+                <div class="text-center mt-8">
+                    <button id="submit-button" type="submit" class="w-full md:w-auto px-8 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium transition duration-200">
+                        Generate My Itinerary
+                    </button>
+                    <!-- Loading Indicator -->
+                    <div id="loading-indicator" class="hidden flex items-center justify-center space-x-3">
+                        <svg class="animate-spin h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <p class="text-lg font-semibold bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
+                            generating tourism plan...
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('tourism-form');
+        const submitButton = document.getElementById('submit-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+
+        form.addEventListener('submit', function() {
+            // Hide the button and show the loader
+            submitButton.classList.add('hidden');
+            loadingIndicator.classList.remove('hidden');
+            // Allow the form to submit naturally
+        });
+    </script>
 </body>
 </html>
+
+
