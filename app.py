@@ -20,7 +20,7 @@ async def process_request():
     # TODO: do some form-input validation/sanitization (in both front-end and back-end)
 
     try:
-        trip_plan_as_str = await orchestrate_agents(prompt, int(days), pace)
+        trip_plan_json = await orchestrate_agents(prompt, days, pace)
     except Exception as e:
         e_msg = str(e)
         if ("Could not generate program" in e_msg) and ("ERROR" not in e_msg):
@@ -29,10 +29,10 @@ async def process_request():
         else:
             raise e
 
-    if trip_plan_as_str is None:
+    if trip_plan_json is None:
         return render_template('plan.html', title=APP_TITLE, tourism_plan="Could not generate tourism plan!")
 
-    return render_template('plan.html', title=APP_TITLE, tourism_plan=trip_plan_as_str)
+    return render_template('plan.html', title=APP_TITLE, tourism_plan=trip_plan_json)
 
 
 if __name__ == '__main__':
