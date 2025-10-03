@@ -55,7 +55,8 @@ def trip_plan_jsonifier(trip_plan: TripPlan):
         return trip_plan
 
     json_obj = {
-        "itinerary_pace": trip_plan.itinerary_pace
+        "itinerary_pace": trip_plan.itinerary_pace,
+        "username": trip_plan.username
     }
 
     daily_schedules = trip_plan.schedule

@@ -35,6 +35,7 @@ class DailySchedule(BaseModel):
 
 class TripPlan(BaseModel):
     itinerary_pace: str = Field(description="Itinerary pace of the trip, which is how much sightseeing the user wants to fit in a single day; this could be one of the following values: Compressed, Normal, or Relaxed.")
+    username: str = Field(description="Username of the user who is planning the trip. Use the given tool to extract this information from the prompt.")
     schedule: List[DailySchedule] = Field(description="Schedule of the trip, structured as a List of DailySchedule items.")
 
 class Accommodation(BaseModel):

@@ -103,7 +103,7 @@ plan_organizer_agent = Agent(
         "    (c) if the user wants a RELAXED schedule then select only 1 activity in each day, plus dining."
         "  (2) sort the activities by geographic proximity (based on the address or the geolocation of the activity) so that the activities you fit in a single day are co-located or are close enough to each other."        
         #"  (3) Do not repeat the same restaurant in multiple days (i.e. if you suggest a restaurant in a day, then do not suggest the same restaurant again for dining in any subsequent days)."
-        "  (4) Make the activities span the day from 9am to 7pm."
+        "  (4) Make the activities span the day from 9:00am in the morning to 7:00pm in the evening."
         "  (5) Leave a one-hour gap break between each activity and the next."
         #"  (6) Do not leave any days empty or with just a single activity"
         " If you cannot extract any clear participants from the prompt, use the logged-in user."
