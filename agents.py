@@ -53,8 +53,8 @@ prompt_validation_agent = Agent(
         "  (2) validate that the city is a known city for tourism and has lots of attractions/activities."
         " For each one of the two checks, please include a confidence score to indicate how sure you are of the validation verdict."
         " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
-        " The expected format of your response is a plain JSON object that matches the pydantic schema."                
-        " Return only a plain JSON object matching the schema."
+        #" The expected format of your response is a plain JSON object that matches the pydantic schema."                
+        #" Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
         " Do NOT include triple backticks, markdown, or any other formatting. "
         " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
@@ -76,9 +76,9 @@ tourism_agent = Agent(
         " Your main job is to suggest 10 to 20 tourism activities for the user, based on the city and criteria they specify."
         " Tourism activities can include (but are not limited to): Sightseeing (including museums), Shopping, Theatre, Dining, or Walk."        
         " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
-        " The expected format of your response is a plain JSON object that matches the pydantic schema."
-        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."                
-        " Return only a plain JSON object matching the schema."
+        #" The expected format of your response is a plain JSON object that matches the pydantic schema."
+        #" You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."                
+        #" Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
         " Do NOT include triple backticks, markdown, or any other formatting. "
         " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
@@ -108,9 +108,9 @@ plan_organizer_agent = Agent(
         #"  (6) Do not leave any days empty or with just a single activity"
         " If you cannot extract any clear participants from the prompt, use the logged-in user."
         " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
-        " The expected format of your response is a plain JSON object that matches the pydantic schema."
-        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."        
-        " Return only a plain JSON object matching the schema."
+        #" The expected format of your response is a plain JSON object that matches the pydantic schema."
+        #" You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."        
+        #" Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
         " Do NOT include triple backticks, markdown, or any other formatting. "
         " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
@@ -214,10 +214,10 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
         trip_plan = cast(TripPlan, temp)
 
         if (trip_plan.schedule and len(trip_plan.schedule) > 0
-                and trip_plan.schedule[0].timed_activities
-                and len(trip_plan.schedule[0].timed_activities) > 0):
+                and trip_plan.schedule[0].activities
+                and len(trip_plan.schedule[0].activities) > 0):
             first_day_sample = trip_plan.schedule[0]
-            first_timed_activity_sample = first_day_sample.timed_activities[0]
+            first_timed_activity_sample = first_day_sample.activities[0]
             logger.info(
                 f"""\n\n\n\n\n\n\n\n\n\n
                 Finished organizing trip plan;

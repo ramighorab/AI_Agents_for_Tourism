@@ -41,10 +41,10 @@ def daily_schedule_jsonifier(daily_schedule: DailySchedule):
     }
 
     timed_activities_as_json = []
-    for timed_activity in daily_schedule.timed_activities:
+    for timed_activity in daily_schedule.activities:
         timed_activities_as_json.append(timed_activity_jsonifier(timed_activity))
 
-    json_obj["timed_activities"] = timed_activities_as_json
+    json_obj["activities"] = timed_activities_as_json
 
     return json_obj
 

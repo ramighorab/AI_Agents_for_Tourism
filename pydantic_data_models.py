@@ -31,11 +31,11 @@ class TimedActivity(Activity):
 
 class DailySchedule(BaseModel):
     day: str | int = Field(description="Day number; starting from day 1, then day 2, then day 3, etc.")
-    timed_activities: List[TimedActivity] = Field(description="The day's schedule of activities; this is structured as a list of Timed Activities, each of which has a start time and end time.")
+    activities: List[TimedActivity] = Field(description="The day's schedule of timed activities; this is structured as a list of TimedActivity items, each of which has a start time and end time.")
 
 class TripPlan(BaseModel):
     itinerary_pace: str = Field(description="Itinerary pace of the trip, which is how much sightseeing the user wants to fit in a single day; this could be one of the following values: Compressed, Normal, or Relaxed.")
-    schedule: List[DailySchedule] = Field(description="Schedule of the trip, structured as a List of Daily Schedules")
+    schedule: List[DailySchedule] = Field(description="Schedule of the trip, structured as a List of DailySchedule items.")
 
 class Accommodation(BaseModel):
     type: str = Field(description="type of accommodation; this could be Hotel, Hostel, or B&B")
