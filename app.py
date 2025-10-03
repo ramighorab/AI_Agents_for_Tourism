@@ -32,7 +32,8 @@ async def process_request():
     if trip_plan_json is None:
         return render_template('plan.html', title=APP_TITLE, tourism_plan="Could not generate tourism plan!")
 
-    return render_template('plan.html', title=APP_TITLE, tourism_plan=trip_plan_json)
+    #return render_template('plan.html', title=APP_TITLE, tourism_plan=trip_plan_json)
+    return render_template('display_trip_plan.html', title=APP_TITLE, itinerary_data=trip_plan_json)
 
 
 if __name__ == '__main__':

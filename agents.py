@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Any
+from typing import Optional, Any, List
 
 #from flask import session
 from pydantic_ai import RunContext
@@ -8,8 +8,9 @@ import logging
 from pydantic_ai.models.openai import OpenAIModel  # TODO: replace with the newer OpenAIResponsesModel
 from pydantic_ai.providers.openai import OpenAIProvider
 
-from jsonifiers import trip_plan_jsonifier, activity_jsonifier, suggested_activities_jsonifier, convert_json_prompt_to_text
-from pydantic_data_models import ValidAndFamousCityCheckGate, SuggestedActivities, TripPlan
+from jsonifiers import trip_plan_jsonifier, activity_jsonifier, convert_activities_from_json_to_prompt_to_text, \
+    suggested_activities_jsonifier, timed_activity_jsonifier
+from pydantic_data_models import ValidAndFamousCityCheckGate, TripPlan, Activity
 from typing import cast
 
 
@@ -51,13 +52,14 @@ prompt_validation_agent = Agent(
         "  (1) validate that the prompt contains at least one city name."
         "  (2) validate that the city is a known city for tourism and has lots of attractions/activities."
         " For each one of the two checks, please include a confidence score to indicate how sure you are of the validation verdict."
-        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."
-        #" In your replies, try not to include any special characters (except dot, comma, and semi-colon) because they ruin the parsing! If the reply includes curly braces or quotes please omit them."
-        " The expected format of your response is a plain JSON object that matches the pydantic schema."
-        " Do NOT include triple backticks, markdown, or any other formatting. "        
+        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
+        " The expected format of your response is a plain JSON object that matches the pydantic schema."                
         " Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
-        #" Respond ONLY with a tool call using the format expected by the tools provided."
+        " Do NOT include triple backticks, markdown, or any other formatting. "
+        " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
+        " If there is any curly brace in the tourism activity name or place name in the response, please remove the curly brace because it ruins the parsing."        
+        " Respond ONLY with a tool call using the format expected by the tools provided."
     ),
     instrument=True,
     #retries=AGENT_NO_RETRY
@@ -68,27 +70,27 @@ prompt_validation_agent = Agent(
 # This agent is responsible for suggesting a list of tourism activities
 tourism_agent = Agent(
     ollama_model,
-    output_type=SuggestedActivities,
+    output_type=List[Activity],
     system_prompt=(
         "You are a helpful tourism agent."
         " Your main job is to suggest 10 to 20 tourism activities for the user, based on the city and criteria they specify."
-        " Tourism activities can include (but are not limited to): Sightseeing (including museums), Shopping, Theatre, Dining, or Walk."
-        " If you cannot extract any clear participants from the prompt, use the logged-in user."
-        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."
-        #" In your replies, try not to include any special characters (except dot, comma, and semi-colon) because they ruin the parsing! If the reply includes curly braces or quotes please omit them."
+        " Tourism activities can include (but are not limited to): Sightseeing (including museums), Shopping, Theatre, Dining, or Walk."        
+        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
         " The expected format of your response is a plain JSON object that matches the pydantic schema."
-        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."
-        " Do NOT include triple backticks, markdown, or any other formatting. "        
+        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."                
         " Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
-        #" Respond ONLY with a tool call using the format expected by the tools provided."
+        " Do NOT include triple backticks, markdown, or any other formatting. "
+        " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
+        " If there is any curly brace in the tourism activity name or place name in the response, please remove the curly brace because it ruins the parsing."
+        " Respond ONLY with a tool call using the format expected by the tools provided."
     ),
     instrument=True,
     retries=AGENT_RETRIES
 )
 
 
-# This agent is responsible for selecting a number of activities from the given list, so that they fit the specified pace, and sorting them by location
+# This agent is responsible for selecting a number of activities from the given list, so that they fit the specified pace, and sorting them by address or geolocation
 plan_organizer_agent = Agent(
     ollama_model,
     output_type=TripPlan,
@@ -105,14 +107,15 @@ plan_organizer_agent = Agent(
         "  (5) Leave a one-hour gap break between each activity and the next."
         #"  (6) Do not leave any days empty or with just a single activity"
         " If you cannot extract any clear participants from the prompt, use the logged-in user."
-        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."
-        #" In your replies, try not to include any special characters (except dot, comma, and semi-colon) because they ruin the parsing! If the reply includes curly braces or quotes please omit them."
+        " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
         " The expected format of your response is a plain JSON object that matches the pydantic schema."
-        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."
-        " Do NOT include triple backticks, markdown, or any other formatting. "
+        " You are allowed to use the given agent tool(s) if you need; you can make a tool call using the format expected by the tools provided."        
         " Return only a plain JSON object matching the schema."
         " Make sure that any json object returned is valid json, with double quotes for all keys and values."
-        #" Respond ONLY with a tool call using the format expected by the tools provided."
+        " Do NOT include triple backticks, markdown, or any other formatting. "
+        " If there is any single quote in the tourism activity name or place name in the response, please remove the single quote because it ruins the parsing."
+        " If there is any curly brace in the tourism activity name or place name in the response, please remove the curly brace because it ruins the parsing."
+        " Respond ONLY with a tool call using the format expected by the tools provided."
     ),
     instrument=True,
     retries=AGENT_RETRIES
@@ -162,7 +165,7 @@ async def validate_prompt(user_prompt: str) ->  tuple[bool, str]:
         logger.error(f"Error encountered while validating user prompt: {str(e)}")
         return False, "ERROR"
 
-async def suggest_activities(user_prompt: str) -> Optional[SuggestedActivities]:
+async def suggest_activities(user_prompt: str) -> Optional[List[Activity]]:
     """Gets a list of tourism activities"""
     try:
         logger.info("Invoking tourism_agent, for user prompt: %s", user_prompt)
@@ -172,10 +175,10 @@ async def suggest_activities(user_prompt: str) -> Optional[SuggestedActivities]:
         logger.debug("tourism_agent result: %s", result)
 
         temp: Any = result.output
-        suggested_activities = cast(SuggestedActivities, temp)
+        activities = cast(List[Activity], temp)
 
-        if suggested_activities.activities and len(suggested_activities.activities) > 0:
-            first_activity = suggested_activities.activities[0]
+        if activities and len(activities) > 0:
+            first_activity = activities[0]
             logger.info(
                 f"""\n\n\n\n\n\n\n\n\n\n
                 Finished generating suggested activities; sample first activity is:
@@ -191,7 +194,7 @@ async def suggest_activities(user_prompt: str) -> Optional[SuggestedActivities]:
             logger.error("No activities were generated.")
             return None
 
-        return suggested_activities
+        return activities
 
     except Exception as e:
         logger.error(f"Error encountered while generating tourism suggestions: {str(e)}")
@@ -200,7 +203,7 @@ async def suggest_activities(user_prompt: str) -> Optional[SuggestedActivities]:
 async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
     """Organize the tourism plan by fitting it in days and ensuring close geo-proximity for activities in each day"""
     try:
-        prompt_as_text = convert_json_prompt_to_text(dynamic_prompt)
+        prompt_as_text = convert_activities_from_json_to_prompt_to_text(dynamic_prompt)
         logger.info("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nInvoking plan_organizer_agent, for dynamic prompt: %s", prompt_as_text)
 
         result: AgentRunResult = await plan_organizer_agent.run(prompt_as_text)
@@ -210,18 +213,18 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
         temp: Any = result.output
         trip_plan = cast(TripPlan, temp)
 
-        if trip_plan.schedule and len(trip_plan.schedule) > 0 and trip_plan.schedule[0].day_schedule and len(trip_plan.schedule[0].day_schedule) > 0:
+        if (trip_plan.schedule and len(trip_plan.schedule) > 0
+                and trip_plan.schedule[0].timed_activities
+                and len(trip_plan.schedule[0].timed_activities) > 0):
             first_day_sample = trip_plan.schedule[0]
-            first_slot_sample = first_day_sample.day_schedule[0]
+            first_timed_activity_sample = first_day_sample.timed_activities[0]
             logger.info(
                 f"""\n\n\n\n\n\n\n\n\n\n
                 Finished organizing trip plan;
                 itinerary_pace: {trip_plan.itinerary_pace},
                 schedule size (number of days): {len(trip_plan.schedule)},
                 first_day_sample day: {first_day_sample.day}
-                first_day_sample first_slot_sample start_time: {first_slot_sample.start_time},
-                first_day_sample first_slot_sample end_time: {first_slot_sample.end_time},
-                first_day_sample first_slot_sample activity: {activity_jsonifier(first_slot_sample.activity)}"""
+                first_day_sample first_timed_activity_sample: {timed_activity_jsonifier(first_timed_activity_sample)}"""
             )
         else:
             logger.error("No organized plan.")
@@ -233,20 +236,15 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
         raise e
 
 
-def create_prompt_from_suggested_activities(suggested_activities: SuggestedActivities,
-                                        num_days: str, itinerary_pace: str) -> str:
-    #prompt_str = str(suggested_activities)
-    prompt_json = suggested_activities_jsonifier(suggested_activities)
-    #logger.debug("prompt_str: %s", prompt_str)
-    #prompt_str += " . Number of days (to do the tourism activities): " + num_days
+def create_prompt_from_suggested_activities(activities: List[Activity],
+                                            num_days: str, itinerary_pace: str) -> str:
+    prompt_json = suggested_activities_jsonifier(activities)
     prompt_json["Number of days (to do the tourism activities)"] = num_days
-    #prompt_str += " . Itinerary Pace (Compressed, Normal, or Relaxed): " + itinerary_pace
     prompt_json["Itinerary Pace (Compressed, Normal, or Relaxed)"] = itinerary_pace
-    #return prompt_str
     logger.debug("prompt_json: %s", prompt_json)
     return prompt_json
 
-#async def orchestrate_agents(user_prompt: str, num_days: int, itinerary_pace: str) -> dict:
+
 async def orchestrate_agents(user_prompt: str, num_days: str, itinerary_pace: str) -> str:
     """Manages the execution order of the various agents to achieve the goal"""
 
@@ -257,13 +255,13 @@ async def orchestrate_agents(user_prompt: str, num_days: str, itinerary_pace: st
         raise Exception(f"Could not generate program; justification: {justification}")
 
     logger.info("Generating tourism activities...")
-    suggested_activities: SuggestedActivities = await suggest_activities(user_prompt)
+    activities: List[Activity] = await suggest_activities(user_prompt)
 
-    if suggested_activities is None:
+    if activities is None:
         raise Exception("No activities suggested!")
 
     logger.info("Organizing Schedule...")
-    dynamic_prompt = create_prompt_from_suggested_activities(suggested_activities, num_days, itinerary_pace)
+    dynamic_prompt = create_prompt_from_suggested_activities(activities, num_days, itinerary_pace)
     trip_plan: TripPlan = await organize_schedule(dynamic_prompt)
 
     trip_plan_as_json = trip_plan_jsonifier(trip_plan)
