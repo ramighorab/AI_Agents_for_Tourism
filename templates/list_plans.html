@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Saved Plans - {{ title }}</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Applying the Inter font to the whole page */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Banner Section -->
+    <div class="bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-12 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-2">{{ title }}</h1>
+            <p class="text-xl text-blue-100">Your AI-Powered Travel Planner</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-8 md:py-12">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10 -mt-24 relative z-10">
+
+            <!-- Header Section -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">My Saved Plans</h2>
+                <p class="text-gray-600 mt-2">Here are all the itineraries you've saved.</p>
+            </div>
+
+            <!-- List of Plans -->
+            <div class="space-y-4">
+                <!-- Check if there are any plans to display -->
+                {% if plans %}
+                    <!-- Loop through each plan passed from the Flask app -->
+                    {% for plan in plans %}
+                    <div class="flex flex-col md:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                        <!-- Plan Details -->
+                        <div class="flex-grow text-center md:text-left mb-4 md:mb-0">
+                            <h3 class="text-xl font-bold text-gray-800">{{ plan.city }}</h3>
+                            <div class="text-gray-600 text-sm mt-1">
+                                <span>{{ plan.days }} Days</span>
+                                <span class="mx-2">|</span>
+                                <span>{{ plan.pace }} Pace</span>
+                                <span class="mx-2">|</span>
+                                <span>Created on: {{ plan.created_at.strftime('%d %B, %Y at %I:%M %p') }}</span>
+                            </div>
+                        </div>
+                        <!-- View Plan Button -->
+                        <div class="flex-shrink-0">
+                            <a href="{{ url_for('view_plan', plan_id=plan.id) }}" class="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 font-medium transition duration-200">
+                                View Plan
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <!-- Message to display if there are no saved plans -->
+                    <div class="text-center py-12 px-6 bg-gray-50 rounded-lg">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        <h3 class="mt-2 text-lg font-medium text-gray-900">No Saved Plans Yet</h3>
+                        <p class="mt-1 text-sm text-gray-500">Create a new plan to see it here.</p>
+                         <div class="mt-6">
+                           <a href="/" class="px-6 py-2 text-white bg-teal-600 rounded-lg hover:bg-teal-700 font-medium transition duration-200">
+                                Create a New Plan
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+

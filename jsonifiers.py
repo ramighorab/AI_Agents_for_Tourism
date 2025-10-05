@@ -1,5 +1,7 @@
+import json
 from typing import List
 
+from db_models import Plan
 from pydantic_data_models import DailySchedule, Activity, TripPlan, TimedActivity
 
 
@@ -72,6 +74,20 @@ def trip_plan_jsonifier(trip_plan: TripPlan):
         daily_schedules_as_json.append(daily_schedule_jsonifier(daily_schedule))
 
     json_obj["schedule"] = daily_schedules_as_json
+
+    return json_obj
+
+
+def db_plan_jsonifier(plan: Plan):
+
+    plan_schedule = json.loads(plan.schedule)
+
+    json_obj = {
+        "username": plan.username,
+        "itinerary_pace": plan.pace,
+        "city": plan.city,
+        "schedule": plan_schedule['schedule']
+    }
 
     return json_obj
 

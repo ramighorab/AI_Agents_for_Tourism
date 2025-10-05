@@ -76,11 +76,7 @@
 
                 <!-- Submit Button and Loading Indicator -->
                 <div class="text-center mt-8">
-                    <button id="submit-button" type="submit" class="w-full md:w-auto px-8 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium transition duration-200">
-                        Generate My Itinerary
-                    </button>
-                    <!-- Loading Indicator -->
-                    <div id="loading-indicator" class="hidden flex items-center justify-center space-x-3">
+                    <div id="loading-indicator" class="hidden flex items-center justify-center space-x-3 mb-4">
                         <svg class="animate-spin h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -88,6 +84,22 @@
                         <p class="text-lg font-semibold bg-gradient-to-r from-blue-600 to-teal-500 bg-clip-text text-transparent">
                             generating tourism plan...
                         </p>
+                    </div>
+
+                    <div id="action-buttons" class="flex flex-col items-center space-y-4">
+                         <button id="submit-button" type="submit" class="w-full md:w-auto px-8 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium transition duration-200">
+                            Generate My Itinerary
+                        </button>
+
+                        <div class="flex items-center space-x-2 text-gray-500">
+                           <hr class="w-20 border-gray-300">
+                           <span>OR</span>
+                           <hr class="w-20 border-gray-300">
+                        </div>
+
+                        <a href="/my_plans" class="w-full md:w-auto px-8 py-3 text-white bg-teal-600 rounded-lg hover:bg-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-300 font-medium transition duration-200">
+                            Retrieve Saved Plans
+                        </a>
                     </div>
                 </div>
             </form>

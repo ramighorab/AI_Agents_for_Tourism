@@ -1,14 +1,11 @@
-import json
+import logging
 from typing import Optional, Any, List
-
-#from flask import session
+from flask import session
 from pydantic_ai import RunContext
 from pydantic_ai.agent import Agent, InstrumentationSettings, AgentRunResult
-import logging
 from pydantic_ai.models.openai import OpenAIModel  # TODO: replace with the newer OpenAIResponsesModel
 from pydantic_ai.providers.openai import OpenAIProvider
-
-from jsonifiers import trip_plan_jsonifier, activity_jsonifier, convert_activities_from_json_to_prompt_to_text, \
+from jsonifiers import trip_plan_jsonifier, convert_activities_from_json_to_prompt_to_text, \
     suggested_activities_jsonifier, timed_activity_jsonifier
 from pydantic_data_models import ValidAndFamousCityCheckGate, TripPlan, Activity
 from typing import cast
@@ -126,8 +123,7 @@ plan_organizer_agent = Agent(
 @tourism_agent.tool
 @plan_organizer_agent.tool
 async def get_logged_in_user(ctx: RunContext) -> str:
-    #user: str = session.get('username')
-    user: str = "jack"
+    user: str = session.get('username')
     logger.info(f"Logged-in user: {user}")
     return user
 
@@ -269,6 +265,4 @@ async def orchestrate_agents(user_prompt: str, num_days: str, itinerary_pace: st
 
     logger.info("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFinished organizing schedule.")
 
-    #return str(trip_plan)
-    #return json.dumps(trip_plan)
     return trip_plan_as_json
