@@ -60,3 +60,11 @@ This proof-of-concept includes the following core functionalities:
    - python app.py
      - e.g. specifically, from the project dir: ./.venv/bin/python app.py
 7) Open your browser and navigate to http://localhost:5000/
+
+## Some screenshots from the app
+![main_screen.png](app_screenshots/main_screen.png)
+![London.png](app_screenshots/London.png)
+![Paris.png](app_screenshots/Paris.png)
+![city_not_famous.png](app_screenshots/city_not_famous.png)
+![city_not_famous_failed_validation.png](app_screenshots/city_not_famous_failed_validation.png)
+![saved_plans.png](app_screenshots/saved_plans.png)
