@@ -143,8 +143,8 @@ async def validate_prompt(user_prompt: str) ->  tuple[bool, str]:
         temp: Any = result.output
         valid_and_famous_city_check_gate = cast(ValidAndFamousCityCheckGate, temp)
 
-        logger.info(
-            f"""Finished validation;
+        logger.info("Finished validating user prompt.")
+        logger.debug(f"""Finished validation;
             prompt_contains_city: {valid_and_famous_city_check_gate.prompt_contains_city},
             confidence_score_contains_valid_city_name: {valid_and_famous_city_check_gate.confidence_score_contains_valid_city_name:.1f},
             is_famous_city_for_sightseeing: {valid_and_famous_city_check_gate.is_famous_city_for_sightseeing},
@@ -174,8 +174,8 @@ async def suggest_activities(user_prompt: str) -> Optional[List[Activity]]:
 
         if activities and len(activities) > 0:
             first_activity = activities[0]
-            logger.info(
-                f"""Finished generating suggested activities; sample first activity is:
+            logger.info("Finished generating suggested activities.")
+            logger.debug(f"""Finished generation; sample first activity is:
                 type: {first_activity.type},
                 name: {first_activity.name},
                 description: {first_activity.description},
@@ -198,7 +198,7 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
     """Organize the tourism plan by fitting it in days and ensuring close geo-proximity for activities in each day"""
     try:
         prompt_as_text = convert_activities_from_json_to_prompt_to_text(dynamic_prompt)
-        logger.info("Invoking plan_organizer_agent, for dynamic prompt: %s", prompt_as_text)
+        logger.debug("Invoking plan_organizer_agent, for dynamic prompt: %s", prompt_as_text)
 
         result: AgentRunResult = await plan_organizer_agent.run(prompt_as_text)
 
@@ -212,8 +212,8 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
                 and len(trip_plan.schedule[0].activities) > 0):
             first_day_sample = trip_plan.schedule[0]
             first_timed_activity_sample = first_day_sample.activities[0]
-            logger.info(
-                f"""Finished organizing trip plan;
+            logger.info("Finished organizing trip plan")
+            logger.debug(f"""Finished organization;
                 itinerary_pace: {trip_plan.itinerary_pace},
                 city: {trip_plan.city},
                 schedule size (number of days): {len(trip_plan.schedule)},
