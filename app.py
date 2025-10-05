@@ -56,10 +56,10 @@ def save_plan():
     itinerary_data_as_dict = ast.literal_eval(itinerary_data)
     itinerary_data_json = json.dumps(itinerary_data_as_dict)
     print("debugging @app.py: itinerary_data after converting to json with json.dumps ", itinerary_data_json)
-
+    num_days = len(itinerary_data_as_dict['schedule'])
     username = request.form.get('username')
-    #save_plan_to_db(city, pace, itinerary_data_json, session['user_id'])
-    save_plan_to_db(city, pace, itinerary_data_json, username)
+    #save_plan_to_db(city, num_days, pace, itinerary_data_json, session['user_id'])
+    save_plan_to_db(city, num_days, pace, itinerary_data_json, username)
 
     return render_template('display_trip_plan.html', title=APP_TITLE,
                            itinerary_data=itinerary_data_as_dict,

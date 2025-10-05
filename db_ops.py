@@ -12,8 +12,8 @@ from extensions import db
 # def get_user_by_username(username):
 #     return db.session.execute(db.select(User).filter_by(username=username)).scalar_one_or_none()
 
-def save_plan_to_db(city: str, pace: str, itinerary_data: str, username: str):
-    plan = Plan(username=username, city=city, pace=pace, schedule=itinerary_data)
+def save_plan_to_db(city: str, days: int, pace: str, itinerary_data: str, username: str):
+    plan = Plan(username=username, city=city, days=days, pace=pace, schedule=itinerary_data)
     saved = db.session.add(plan)
     print("Debugging: db_ops.save_plan(): the returned thing from the db.session.add() is: ", saved)
     db.session.commit()

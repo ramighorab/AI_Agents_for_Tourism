@@ -35,10 +35,12 @@ class Plan(db.Model):
     __tablename__ = "plan"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     username: Mapped[str] = mapped_column(String(50), nullable=False)
-    city: Mapped[str] = mapped_column(String(40), nullable=False)
+    city: Mapped[str] = mapped_column(String(40), nullable=True)
+    days: Mapped[int] = mapped_column(Integer, nullable=False)
     pace: Mapped[str] = mapped_column(String(20), nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
     schedule: Mapped[str] = mapped_column(String(), nullable=False) # meant to store the whole schedule as json string, kind of like a temporary no-sql document store
 
     def __repr__(self):
-        return f"<Plan; id: {self.id}, username: {self.username}, city: {self.city}, pace: {self.pace}, created_at: {self.created_at}>"
+        return (f"<Plan; id: {self.id}, username: {self.username}, city: {self.city},"
+                f" days: {self.days}, pace: {self.pace}, created_at: {self.created_at}>")
