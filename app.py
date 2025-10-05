@@ -1,8 +1,15 @@
+import ast
+import json
+
 from dotenv import load_dotenv
+load_dotenv() # calling it before the extensions import so that the .env file is loaded before sql alchemy steps in.
+
 from flask import render_template, request
 
 from agents import orchestrate_agents
+from db_ops import save_plan_to_db
 from extensions import app, db, init_db
+from db_models import Plan
 
 APP_TITLE = "Tour Pal"
 
@@ -21,6 +28,8 @@ async def process_request():
 
     try:
         trip_plan_json = await orchestrate_agents(prompt, days, pace)
+        print("\n\n\n\n\n\n\n\n\n\ndebugging @app.py.process_request(): trip_plan_json: ", trip_plan_json)
+        print("\n\n\n\n\n\n\n\n\n\ndebugging @app.py.process_request(): json.dumps(trip_plan_json): ", json.dumps(trip_plan_json))
     except Exception as e:
         e_msg = str(e)
         if ("Could not generate program" in e_msg) and ("ERROR" not in e_msg):
@@ -36,12 +45,35 @@ async def process_request():
     return render_template('display_trip_plan.html', title=APP_TITLE, itinerary_data=trip_plan_json)
 
 
+@app.route('/save_plan', methods = ['POST'])
+#@login_required
+def save_plan():
+    city = request.form.get('city')
+    pace = request.form.get('pace')
+    itinerary_data = request.form.get('itinerary_data')
+
+    print("debugging @app.py: itinerary_data as obtained from the request: ", json.dumps(itinerary_data))
+    itinerary_data_as_dict = ast.literal_eval(itinerary_data)
+    itinerary_data_json = json.dumps(itinerary_data_as_dict)
+    print("debugging @app.py: itinerary_data after converting to json with json.dumps ", itinerary_data_json)
+
+    username = request.form.get('username')
+    #save_plan_to_db(city, pace, itinerary_data_json, session['user_id'])
+    save_plan_to_db(city, pace, itinerary_data_json, username)
+
+    return render_template('display_trip_plan.html', title=APP_TITLE,
+                           itinerary_data=itinerary_data_as_dict,
+                           #itinerary_data=ast.literal_eval(itinerary_data),
+                           saved=True)
+
+
 if __name__ == '__main__':
 
-    load_dotenv()
+    print("debugging @app.py: Initializing DB: ", app.config['SQLALCHEMY_DATABASE_URI'])
 
     with app.app_context():
-        init_db()
+        confirmation_msg = init_db()
+        print("debugging @app.py: ", confirmation_msg)
 
     app.run(port=5000, debug=True)
     # Note: The debug=True parameter is what activates the automatic reloader,

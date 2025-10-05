@@ -15,4 +15,5 @@ def init_db():
     with app.app_context():
         with db.engine.begin() as connection:
             db.metadata.create_all(bind=connection)
+            print("Debugging @extensions.py.init_db: Database initialized.")
             return jsonify({"message": "Database initialized."})

@@ -73,7 +73,7 @@ tourism_agent = Agent(
     output_type=List[Activity],
     system_prompt=(
         "You are a helpful tourism agent."
-        " Your main job is to suggest 10 to 20 tourism activities for the user, based on the city and criteria they specify."
+        " Your main job is to suggest 5 to 10 tourism activities for the user, based on the city and criteria they specify."
         " Tourism activities can include (but are not limited to): Sightseeing (including museums), Shopping, Theatre, Dining, or Walk."        
         " Your suggestions should be very brief and concise; your style is to give very short but informative answers."        
         #" The expected format of your response is a plain JSON object that matches the pydantic schema."
@@ -222,6 +222,7 @@ async def organize_schedule(dynamic_prompt) -> Optional[TripPlan]:
                 f"""\n\n\n\n\n\n\n\n\n\n
                 Finished organizing trip plan;
                 itinerary_pace: {trip_plan.itinerary_pace},
+                city: {trip_plan.city},
                 schedule size (number of days): {len(trip_plan.schedule)},
                 first_day_sample day: {first_day_sample.day}
                 first_day_sample first_timed_activity_sample: {timed_activity_jsonifier(first_timed_activity_sample)}"""

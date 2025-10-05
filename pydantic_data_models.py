@@ -26,8 +26,8 @@ class Activity(BaseModel):
     estimated_cost: str | float = Field(description="The price of the tourism activity with the currency symbol beside the number; if the attraction is free to visit or does not cost anything then write Free); in case of dining, this is an average price of an average meal at the said restaurant")
 
 class TimedActivity(Activity):
-    start_time: datetime.time | str = Field(description="Start time of the tourism activity.")
-    end_time: datetime.time| str = Field(description="End time of the tourism activity.")
+    start_time: str = Field(description="Start time of the tourism activity, in am/pm format.")
+    end_time: str = Field(description="End time of the tourism activity, in am/pm format")
 
 class DailySchedule(BaseModel):
     day: str | int = Field(description="Day number; starting from day 1, then day 2, then day 3, etc.")
@@ -35,6 +35,7 @@ class DailySchedule(BaseModel):
 
 class TripPlan(BaseModel):
     itinerary_pace: str = Field(description="Itinerary pace of the trip, which is how much sightseeing the user wants to fit in a single day; this could be one of the following values: Compressed, Normal, or Relaxed.")
+    city: str = Field(description="City of the trip. This is the city name that the user provided in the prompt.")
     username: str = Field(description="Username of the user who is planning the trip. Use the given tool to extract this information from the prompt.")
     schedule: List[DailySchedule] = Field(description="Schedule of the trip, structured as a List of DailySchedule items.")
 

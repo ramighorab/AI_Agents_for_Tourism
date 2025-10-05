@@ -4,12 +4,15 @@ from pydantic_data_models import DailySchedule, Activity, TripPlan, TimedActivit
 
 
 def activity_jsonifier(activity: Activity):
+    name = remove_single_quotes(activity.name)
+    description = remove_single_quotes(activity.description)
+    address = remove_single_quotes(activity.address)
     json_obj = {
         "type": activity.type,
-        "name": activity.name,
-        "description": activity.description,
+        "name": name,
+        "description": description,
         "estimated_duration_minutes": activity.estimated_duration_minutes,
-        "address": activity.address,
+        "address": address,
         #"location": activity.location,
         "rating": activity.rating,
         "estimated_cost": activity.estimated_cost,
@@ -19,14 +22,17 @@ def activity_jsonifier(activity: Activity):
 
 
 def timed_activity_jsonifier(timed_activity: TimedActivity):
+    name = remove_single_quotes(timed_activity.name)
+    description = remove_single_quotes(timed_activity.description)
+    address = remove_single_quotes(timed_activity.address)
     json_obj = {
         "type": timed_activity.type,
-        "name": timed_activity.name,
-        "description": timed_activity.description,
+        "name": name,
+        "description": description,
         "estimated_duration_minutes": timed_activity.estimated_duration_minutes,
         "start_time": timed_activity.start_time,
         "end_time": timed_activity.end_time,
-        "address": timed_activity.address,
+        "address": address,
         #"location": timed_activity.location,
         "rating": timed_activity.rating,
         "estimated_cost": timed_activity.estimated_cost,
@@ -55,8 +61,9 @@ def trip_plan_jsonifier(trip_plan: TripPlan):
         return trip_plan
 
     json_obj = {
+        "username": trip_plan.username,
         "itinerary_pace": trip_plan.itinerary_pace,
-        "username": trip_plan.username
+        "city": trip_plan.city,
     }
 
     daily_schedules = trip_plan.schedule
@@ -114,3 +121,8 @@ def convert_activities_from_json_to_prompt_to_text(json_obj):
     recurse(json_obj)
 
     return "\n".join(output_lines)
+
+
+# Single quotes in some of the returned data ruins the json when processed by python because python uses single quote for its dictionary representation of json objects
+def remove_single_quotes(my_str):
+    return my_str.replace("'", "")
