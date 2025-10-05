@@ -1,6 +1,6 @@
 # Tour Pal: Agentic AI for Tourism
 
-Welcome to Tour Pal, a Proof of Concept (POC) web application built to demonstrate the power and potential of an agentic AI workflow.
+Welcome to Tour Pal, a POC web application built to demonstrate the power and potential of an agentic AI workflow.
 
 ## About
 
