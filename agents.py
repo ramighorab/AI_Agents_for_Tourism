@@ -134,7 +134,7 @@ async def get_logged_in_user(ctx: RunContext) -> str:
 async def validate_prompt(user_prompt: str) ->  tuple[bool, str]:
     """Validates if the user prompt contains a city name and that this city is famous for tourism"""
     try:
-        logger.info("Invoking prompt_validation_agent, for user prompt: %s", user_prompt)
+        logger.debug("Invoking prompt_validation_agent, for user prompt: %s", user_prompt)
 
         result: AgentRunResult = await prompt_validation_agent.run(user_prompt)
 
