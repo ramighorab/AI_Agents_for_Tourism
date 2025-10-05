@@ -30,20 +30,17 @@ async def process_request():
 
     try:
         trip_plan_json = await orchestrate_agents(prompt, days, pace)
-        print("\n\n\n\n\n\n\n\n\n\ndebugging @app.py.process_request(): trip_plan_json: ", trip_plan_json)
-        print("\n\n\n\n\n\n\n\n\n\ndebugging @app.py.process_request(): json.dumps(trip_plan_json): ", json.dumps(trip_plan_json))
     except Exception as e:
         e_msg = str(e)
         if ("Could not generate program" in e_msg) and ("ERROR" not in e_msg):
-            # TODO: create a parameter in the plan.html template for error message instead of hijacking the tourism_plan param
-            return render_template('plan.html', title=APP_TITLE, tourism_plan=str(e))
+            return render_template('plan_error_page.html', title=APP_TITLE, tourism_plan=str(e))
         else:
             raise e
 
     if trip_plan_json is None:
-        return render_template('plan.html', title=APP_TITLE, tourism_plan="Could not generate tourism plan!")
+        return render_template('plan_error_page.html', title=APP_TITLE, tourism_plan="Could not generate tourism plan!")
 
-    #return render_template('plan.html', title=APP_TITLE, tourism_plan=trip_plan_json)
+    #return render_template('plan_error_page.html', title=APP_TITLE, tourism_plan=trip_plan_json)
     return render_template('display_trip_plan.html', title=APP_TITLE, itinerary_data=trip_plan_json)
 
 
