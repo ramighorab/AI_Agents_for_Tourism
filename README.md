@@ -68,3 +68,12 @@ This proof-of-concept includes the following core functionalities:
 ![city_not_famous.png](app_screenshots/city_not_famous.png)
 ![city_not_famous_failed_validation.png](app_screenshots/city_not_famous_failed_validation.png)
 ![saved_plans.png](app_screenshots/saved_plans.png)
+
+## Next Steps (viable features to continue the project)
+- Add more agents: Agent to find hotels and book them, Agent to limit budget, etc.
+- Use RAG to find out if any attraction is out of service, etc.
+- Implement complete log-in/log-out (instead of the current simulation of a single user)
+- Dockerize the app
+- Use a NoSQL database
+- Richer UX.
+- Monitoring & Visibility (e.g. LangSmith)
