@@ -69,7 +69,9 @@ This proof-of-concept includes the following core functionalities:
 ![city_not_famous_failed_validation.png](app_screenshots/city_not_famous_failed_validation.png)
 ![saved_plans.png](app_screenshots/saved_plans.png)
 
-## Next Steps (viable features to continue the project)
+## Next Steps (viable features to advance the POC)
+- Add a tool to utilize Google Maps API to get geo coordinates of activities so that it helps in co-locating them when preparing the day's itinerary.
+- Enhance the Organizer Agent system prompt so that it does not repeat activities/restaurants across days.
 - Add more agents: Agent to find hotels and book them, Agent to limit budget, etc.
 - Use RAG to find out if any attraction is out of service, etc.
 - Implement complete log-in/log-out (instead of the current simulation of a single user)
